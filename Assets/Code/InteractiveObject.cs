@@ -12,7 +12,11 @@ namespace RollABall
 
         protected IView _view;
         protected Player _player;
+        
+        public event Action<InteractiveObject> OnDestroyChange;
+
         public bool IsInteractable { get; } = true;
+
 
         #endregion
 
@@ -32,6 +36,7 @@ namespace RollABall
             }
             _player = other.GetComponent<Player>();
             Interaction();
+            OnDestroyChange?.Invoke(this);
             Destroy(gameObject);
         }
 

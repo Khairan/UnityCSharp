@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using Object = UnityEngine.Object;
 
 
@@ -58,6 +59,11 @@ namespace RollABall
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        internal void Remove(InteractiveObject value)
+        {
+            _interactiveObjects = _interactiveObjects.Except(new InteractiveObject[] { value }).ToArray();
         }
 
         #endregion

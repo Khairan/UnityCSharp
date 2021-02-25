@@ -22,6 +22,7 @@ namespace RollABall
             foreach (InteractiveObject interactiveObject in _interactiveObjects)
             {
                 interactiveObject.Initialization(displayBonuses);
+                interactiveObject.OnDestroyChange += InteractiveObjectOnOnDestroyChange;
             }
         }
 
@@ -53,7 +54,13 @@ namespace RollABall
 
 
         #region Methods
-        
+
+        private void InteractiveObjectOnOnDestroyChange(InteractiveObject value)
+        {
+            value.OnDestroyChange -= InteractiveObjectOnOnDestroyChange;
+            _interactiveObjects.Remove(value);
+        }
+
         public void Dispose()
         {
             foreach (InteractiveObject o in _interactiveObjects)
