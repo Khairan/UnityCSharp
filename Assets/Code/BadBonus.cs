@@ -4,14 +4,14 @@ using static UnityEngine.Random;
 
 namespace RollABall
 {
-    public sealed class GoodBonus : InteractiveObject, IFly, IFlicker
+    public sealed class BadBonus : InteractiveObject, IFly, IRotation
     {
         #region Fields
-        
-        public int Point = 1;
 
-        private Material _material;
+        public int Point = -1;
+
         private float _lengthFly;
+        private float _speedRotation;
 
         #endregion
 
@@ -20,8 +20,8 @@ namespace RollABall
 
         private void Awake()
         {
-            _material = GetComponent<Renderer>().material;
             _lengthFly = Range(1.0f, 5.0f);
+            _speedRotation = Range(10.0f, 50.0f);
         }
 
         #endregion
@@ -32,7 +32,7 @@ namespace RollABall
         protected override void Interaction()
         {
             _view.Display(Point);
-            _player.AddSpeed(Range(1.0f, 3.0f));
+            _player.AddSpeed(Range(-1.0f, -2.0f));
             base.Interaction();
         }
 
@@ -43,10 +43,9 @@ namespace RollABall
                 transform.localPosition.z);
         }
 
-        public void Flicker()
+        public void Rotation()
         {
-            _material.color = new Color(_material.color.r, _material.color.g, _material.color.b,
-                Mathf.PingPong(Time.time, 1.0f));
+            transform.Rotate(Vector3.up * (Time.deltaTime * _speedRotation), Space.World);
         }
 
         #endregion

@@ -7,7 +7,7 @@ namespace RollABall
     {
         #region Fields
 
-        public float Speed = 3.0f;
+        [SerializeField] protected float _speed = 3.0f;
         private Rigidbody _rigidbody;
         
         #endregion
@@ -32,7 +32,17 @@ namespace RollABall
 
             Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
 
-            _rigidbody.AddForce(movement * Speed);
+            _rigidbody.AddForce(movement * _speed);
+        }
+
+        public void AddSpeed(float speed)
+        {
+            _speed += speed;
+        }
+
+        public override string ToString()
+        {
+            return _speed.ToString();
         }
 
         #endregion
