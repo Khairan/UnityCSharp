@@ -10,7 +10,9 @@ namespace RollABall
         
         public int Point = 1;
 
+        [SerializeField]private AudioClip _audioSound;
         private Material _material;
+
         private float _lengthFly;
 
         #endregion
@@ -34,6 +36,11 @@ namespace RollABall
             _view.Display(Point);
             _player.AddSpeed(Range(1.0f, 3.0f));
             base.Interaction();
+        }
+
+        protected override void PlaySound()
+        {
+            AudioSource.PlayClipAtPoint(_audioSound, transform.position);
         }
 
         public void Fly()

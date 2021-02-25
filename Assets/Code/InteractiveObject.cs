@@ -2,7 +2,7 @@
 using UnityEngine;
 using static UnityEngine.Random;
 using static UnityEngine.Debug;
-
+using UnityEngine.Events;
 
 namespace RollABall
 {
@@ -12,11 +12,11 @@ namespace RollABall
 
         protected IView _view;
         protected Player _player;
-        
+
         public event Action<InteractiveObject> OnDestroyChange;
+        public UnityEvent BonusEvent;
 
         public bool IsInteractable { get; } = true;
-
 
         #endregion
 
@@ -25,6 +25,8 @@ namespace RollABall
 
         private void Start()
         {
+            BonusEvent = new UnityEvent();
+            BonusEvent.AddListener(PlaySound);
             Action();
         }
 
@@ -45,9 +47,12 @@ namespace RollABall
 
         #region Methods
 
+        protected abstract void PlaySound();
+
         protected virtual void Interaction()
         {
             Log(_player.ToString());
+            BonusEvent.Invoke();
         }
 
         public void Action()
