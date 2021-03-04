@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 namespace RollABall
@@ -7,6 +8,10 @@ namespace RollABall
     public sealed class GameController : MonoBehaviour, IDisposable
     {
         #region Fields
+
+        public Text _finishGameLabel;
+        public Text _pointsLabel;
+        private DisplayEndGame _displayEndGame;
 
         private ListInteractableObject _interactiveObjects;
 
@@ -18,9 +23,17 @@ namespace RollABall
         private void Awake()
         {
             _interactiveObjects = new ListInteractableObject();
-            var displayBonuses = new DisplayBonuses();
+            _displayEndGame = new DisplayEndGame(_finishGameLabel);
+            var displayBonuses = new DisplayBonuses(_pointsLabel);
+            
             foreach (InteractiveObject interactiveObject in _interactiveObjects)
             {
+                if (interactiveObject is KillBonus killBonus)
+                {
+                    killBonus.CaughtPlayer += PauseGame;
+                    killBonus.CaughtPlayer += _displayEndGame.GameOver;
+                }
+
                 interactiveObject.Initialization(displayBonuses);
                 interactiveObject.OnDestroyChange += InteractiveObjectOnOnDestroyChange;
             }
@@ -55,6 +68,11 @@ namespace RollABall
 
         #region Methods
 
+        private void PauseGame(object o, CaughtPlayerEventArgs args)
+        {
+            Time.timeScale = 0.0f;
+        }
+
         private void InteractiveObjectOnOnDestroyChange(InteractiveObject value)
         {
             value.OnDestroyChange -= InteractiveObjectOnOnDestroyChange;
@@ -65,7 +83,15 @@ namespace RollABall
         {
             foreach (InteractiveObject o in _interactiveObjects)
             {
-                Destroy(o.gameObject);
+                if (o is InteractiveObject interactiveObject)
+                {
+                    Destroy(interactiveObject.gameObject);
+                    if (o is KillBonus killBonus)
+                    {
+                        killBonus.CaughtPlayer -= PauseGame;
+                        killBonus.CaughtPlayer -= _displayEndGame.GameOver;
+                    }
+                }
             }
         }
 

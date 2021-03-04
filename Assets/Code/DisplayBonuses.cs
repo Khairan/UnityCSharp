@@ -16,9 +16,9 @@ namespace RollABall
 
         #region Methods
 
-        public DisplayBonuses()
+        public DisplayBonuses(Text pointsLabel)
         {
-            _text = Object.FindObjectOfType<Text>();
+            _text = pointsLabel;
         }
 
         public void Display(int value)

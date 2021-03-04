@@ -12,6 +12,7 @@ namespace RollABall
 
         protected IView _view;
         protected Player _player;
+        protected Color _color;
 
         public event Action<InteractiveObject> OnDestroyChange;
         public UnityEvent BonusEvent;
@@ -57,9 +58,10 @@ namespace RollABall
 
         public void Action()
         {
+            _color = ColorHSV();
             if (TryGetComponent(out Renderer renderer))
             {
-                renderer.material.color = ColorHSV();
+                renderer.material.color = _color;
             }
         }
 
