@@ -8,17 +8,12 @@ namespace RollABall
     public sealed class KillBonus : InteractiveObject, IFly
     {
         #region Fields
-        
-        [SerializeField] private AudioClip _audioSound;
-                
-        private float _lengthFly;
 
-        private event EventHandler<CaughtPlayerEventArgs> _caughtPlayer;
-        public event EventHandler<CaughtPlayerEventArgs> CaughtPlayer
-        {
-            add { _caughtPlayer += value; }
-            remove { _caughtPlayer -= value; }
-        }
+        public event Action<string, Color> OnCaughtPlayerChange = delegate (string str, Color color) { };
+
+        [SerializeField] private AudioClip _audioSound;
+
+        private float _lengthFly;
 
         #endregion
 
@@ -37,13 +32,19 @@ namespace RollABall
 
         protected override void Interaction()
         {
+            OnCaughtPlayerChange.Invoke(gameObject.name, _color);
             base.Interaction();
-            _caughtPlayer?.Invoke(this, new CaughtPlayerEventArgs(_color));
         }
 
         protected override void PlaySound()
         {
             AudioSource.PlayClipAtPoint(_audioSound, transform.position);
+        }
+
+        public override void Execute()
+        {
+            if (!IsInteractable) { return; }
+            Fly();
         }
 
         public void Fly()

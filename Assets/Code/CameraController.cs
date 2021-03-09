@@ -3,26 +3,30 @@
 
 namespace RollABall
 {
-    public sealed class CameraController : MonoBehaviour
+    public sealed class CameraController : IExecute
     {
         #region Fields
-        
-        public Player Player;
+
+        private Transform _player;
+        private Transform _mainCamera;
         private Vector3 _offset;
 
         #endregion
 
 
-        #region UnityMethods
-        
-        private void Start()
+        #region Methods
+
+        public CameraController(Transform player, Transform mainCamera)
         {
-            _offset = transform.position - Player.transform.position;
+            _player = player;
+            _mainCamera = mainCamera;
+            _mainCamera.LookAt(_player);
+            _offset = _mainCamera.position - _player.position;
         }
 
-        private void LateUpdate()
+        public void Execute()
         {
-            transform.position = Player.transform.position + _offset;
+            _mainCamera.position = _player.position + _offset;
         }
 
         #endregion

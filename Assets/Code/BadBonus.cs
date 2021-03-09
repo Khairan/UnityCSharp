@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using static UnityEngine.Random;
 
 
@@ -9,6 +10,8 @@ namespace RollABall
         #region Fields
 
         public int Point = -1;
+
+        public event Action<int> OnPointChange = delegate (int i) { };
 
         [SerializeField] private AudioClip _audioSound;
 
@@ -33,7 +36,7 @@ namespace RollABall
 
         protected override void Interaction()
         {
-            _view.Display(Point);
+            OnPointChange.Invoke(Point);
             _player.AddSpeed(Range(-1.0f, -2.0f));
             base.Interaction();
         }
@@ -41,6 +44,13 @@ namespace RollABall
         protected override void PlaySound()
         {
             AudioSource.PlayClipAtPoint(_audioSound, transform.position);
+        }
+
+        public override void Execute()
+        {
+            if (!IsInteractable) { return; }
+            Fly();
+            Rotation();
         }
 
         public void Fly()

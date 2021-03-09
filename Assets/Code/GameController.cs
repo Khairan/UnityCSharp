@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 namespace RollABall
@@ -8,12 +8,16 @@ namespace RollABall
     public sealed class GameController : MonoBehaviour, IDisposable
     {
         #region Fields
-
-        public Text _finishGameLabel;
-        public Text _pointsLabel;
+        
+        public PlayerType PlayerType = PlayerType.Ball;
+        private ListExecuteObject _executeObjects;
         private DisplayEndGame _displayEndGame;
+        private DisplayBonuses _displayBonuses;
+        private CameraController _cameraController;
+        private InputController _inputController;
+        private Reference _reference;
 
-        private ListInteractableObject _interactiveObjects;
+        private int _countBonuses;
 
         #endregion
 
@@ -22,44 +26,62 @@ namespace RollABall
 
         private void Awake()
         {
-            _interactiveObjects = new ListInteractableObject();
-            _displayEndGame = new DisplayEndGame(_finishGameLabel);
-            var displayBonuses = new DisplayBonuses(_pointsLabel);
+            _executeObjects = new ListExecuteObject();
             
-            foreach (InteractiveObject interactiveObject in _interactiveObjects)
+            _reference = new Reference();
+
+            PlayerBase player = null;
+            if (PlayerType == PlayerType.Ball)
             {
-                if (interactiveObject is KillBonus killBonus)
+                player = _reference.PlayerBall;
+            }
+
+            _cameraController = new CameraController(player.transform, _reference.MainCamera.transform);
+            _executeObjects.AddExecuteObject(_cameraController);
+
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                _inputController = new InputController(player);
+                _executeObjects.AddExecuteObject(_inputController);
+            }
+
+            _displayEndGame = new DisplayEndGame(_reference.EndGame);
+            _displayBonuses = new DisplayBonuses(_reference.Bonuse);
+
+            foreach (var o in _executeObjects)
+            {
+                if (o is KillBonus killBonus)
                 {
-                    killBonus.CaughtPlayer += PauseGame;
-                    killBonus.CaughtPlayer += _displayEndGame.GameOver;
+                    killBonus.OnCaughtPlayerChange += CaughtPlayer;
+                    killBonus.OnCaughtPlayerChange += _displayEndGame.GameOver;
                 }
 
-                interactiveObject.Initialization(displayBonuses);
-                interactiveObject.OnDestroyChange += InteractiveObjectOnOnDestroyChange;
+                if (o is GoodBonus goodBonus)
+                {
+                    goodBonus.OnPointChange += AddBonuse;
+                }
+
+                if (o is BadBonus badBonus)
+                {
+                    badBonus.OnPointChange += AddBonuse;
+                }
             }
+
+            _reference.RestartButton.onClick.AddListener(RestartGame);
+            _reference.RestartButton.gameObject.SetActive(false);
         }
 
         private void Update()
         {
-            foreach (InteractiveObject interactiveObject in _interactiveObjects)
+            for (var i = 0; i < _executeObjects.Length; i++)
             {
+                var interactiveObject = _executeObjects[i];
+
                 if (interactiveObject == null)
                 {
                     continue;
                 }
-
-                if (interactiveObject is IFly fly)
-                {
-                    fly.Fly();
-                }
-                if (interactiveObject is IFlicker flicker)
-                {
-                    flicker.Flicker();
-                }
-                if (interactiveObject is IRotation rotation)
-                {
-                    rotation.Rotation();
-                }
+                interactiveObject.Execute();
             }
         }
 
@@ -68,29 +90,42 @@ namespace RollABall
 
         #region Methods
 
-        private void PauseGame(object o, CaughtPlayerEventArgs args)
+        private void RestartGame()
         {
+            SceneManager.LoadScene(sceneBuildIndex: 0);
+            Time.timeScale = 1.0f;
+        }
+
+        private void CaughtPlayer(string value, Color args)
+        {
+            _reference.RestartButton.gameObject.SetActive(true);
             Time.timeScale = 0.0f;
         }
 
-        private void InteractiveObjectOnOnDestroyChange(InteractiveObject value)
+        private void AddBonuse(int value)
         {
-            value.OnDestroyChange -= InteractiveObjectOnOnDestroyChange;
-            _interactiveObjects.Remove(value);
+            _countBonuses += value;
+            _displayBonuses.Display(_countBonuses);
         }
 
         public void Dispose()
         {
-            foreach (InteractiveObject o in _interactiveObjects)
+            foreach (var o in _executeObjects)
             {
-                if (o is InteractiveObject interactiveObject)
+                if (o is KillBonus killBonus)
                 {
-                    Destroy(interactiveObject.gameObject);
-                    if (o is KillBonus killBonus)
-                    {
-                        killBonus.CaughtPlayer -= PauseGame;
-                        killBonus.CaughtPlayer -= _displayEndGame.GameOver;
-                    }
+                    killBonus.OnCaughtPlayerChange -= CaughtPlayer;
+                    killBonus.OnCaughtPlayerChange -= _displayEndGame.GameOver;
+                }
+
+                if (o is GoodBonus goodBonus)
+                {
+                    goodBonus.OnPointChange -= AddBonuse;
+                }
+
+                if (o is BadBonus badBonus)
+                {
+                    badBonus.OnPointChange -= AddBonuse;
                 }
             }
         }

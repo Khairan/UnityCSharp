@@ -1,6 +1,7 @@
 ﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
+
 
 namespace RollABall
 {
@@ -15,15 +16,15 @@ namespace RollABall
 
         #region Methods
 
-        public DisplayEndGame(Text finishGameLabel)
+        public DisplayEndGame(GameObject endGame)
         {
-            _finishGameLabel = finishGameLabel;
+            _finishGameLabel = endGame.GetComponentInChildren<Text>();
             _finishGameLabel.text = String.Empty;
         }
-
-        public void GameOver(object o, CaughtPlayerEventArgs args)
+        
+        public void GameOver(string name, Color color)
         {
-            _finishGameLabel.text = $"Вы проиграли. Вас убил {((Object)o).name} {args.Color} цвета";
+            _finishGameLabel.text = $"Вы проиграли. Вас убил {name} {color} цвета";
         }
 
         #endregion
