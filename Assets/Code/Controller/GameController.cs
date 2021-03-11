@@ -53,7 +53,7 @@ namespace RollABall
             {
                 if (o is KillBonus killBonus)
                 {
-                    killBonus.OnCaughtPlayerChange += CaughtPlayer;
+                    killBonus.OnCaughtPlayerChange += GamePause;
                     killBonus.OnCaughtPlayerChange += _displayEndGame.GameOver;
                 }
 
@@ -97,7 +97,7 @@ namespace RollABall
             Time.timeScale = 1.0f;
         }
 
-        private void CaughtPlayer(string value, Color args)
+        private void GamePause(string value, Color args)
         {
             _reference.RestartButton.gameObject.SetActive(true);
             Time.timeScale = 0.0f;
@@ -107,6 +107,11 @@ namespace RollABall
         {
             _countBonuses += value;
             _displayBonuses.Display(_countBonuses);
+            if (_countBonuses >= 5)
+            {
+                GamePause(null, Color.clear);
+                _displayEndGame.GameWin(_countBonuses);
+            }
         }
 
         public void Dispose()
@@ -115,7 +120,7 @@ namespace RollABall
             {
                 if (o is KillBonus killBonus)
                 {
-                    killBonus.OnCaughtPlayerChange -= CaughtPlayer;
+                    killBonus.OnCaughtPlayerChange -= GamePause;
                     killBonus.OnCaughtPlayerChange -= _displayEndGame.GameOver;
                 }
 
