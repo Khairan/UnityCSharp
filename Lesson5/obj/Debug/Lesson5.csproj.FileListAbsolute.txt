@@ -1,0 +1,7 @@
+D:\Документы\Game Dev\GeekBrains\Unity\Lesson5\Lesson5\Lesson5\obj\Debug\Lesson5.csprojAssemblyReference.cache
+D:\Документы\Game Dev\GeekBrains\Unity\Lesson5\Lesson5\Lesson5\obj\Debug\Lesson5.csproj.CoreCompileInputs.cache
+D:\Документы\Game Dev\GeekBrains\Unity\Lesson5\Lesson5\Lesson5\bin\Debug\Lesson5.exe.config
+D:\Документы\Game Dev\GeekBrains\Unity\Lesson5\Lesson5\Lesson5\bin\Debug\Lesson5.exe
+D:\Документы\Game Dev\GeekBrains\Unity\Lesson5\Lesson5\Lesson5\bin\Debug\Lesson5.pdb
+D:\Документы\Game Dev\GeekBrains\Unity\Lesson5\Lesson5\Lesson5\obj\Debug\Lesson5.exe
+D:\Документы\Game Dev\GeekBrains\Unity\Lesson5\Lesson5\Lesson5\obj\Debug\Lesson5.pdb
