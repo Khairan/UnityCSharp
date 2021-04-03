@@ -15,7 +15,7 @@ namespace RollABall
 
         #region Methods
                 
-        public MiniMapController(Camera miniMapCamera, Transform mainCamera)
+        public MiniMapController(Camera miniMapCamera, Transform mainCamera, RenderTexture miniMapTexture)
         {
             _player = mainCamera;
             _minimapCamera = miniMapCamera;
@@ -24,9 +24,7 @@ namespace RollABall
             _minimapCamera.transform.rotation = Quaternion.Euler(90.0f, 0, 0);
             _minimapCamera.transform.position = _player.position + new Vector3(0, 5.0f, 0);
 
-            var rt = Resources.Load<RenderTexture>("MiniMap/MiniMapTexture");
-
-            _minimapCamera.GetComponent<Camera>().targetTexture = rt;
+            _minimapCamera.GetComponent<Camera>().targetTexture = miniMapTexture;
         }
 
         public void Execute()

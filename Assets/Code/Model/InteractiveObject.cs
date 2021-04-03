@@ -2,6 +2,7 @@
 using static UnityEngine.Random;
 using static UnityEngine.Debug;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace RollABall
 {
@@ -11,6 +12,8 @@ namespace RollABall
 
         protected PlayerBall _player;
         protected Color _color;
+
+        private RadarObj _radarObj;
 
         public UnityEvent BonusEvent;
 
@@ -43,6 +46,8 @@ namespace RollABall
 
             BonusEvent = new UnityEvent();
             BonusEvent.AddListener(PlaySound);
+            _radarObj = new RadarObj(gameObject);
+            _radarObj.Enable();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -54,6 +59,7 @@ namespace RollABall
             _player = other.GetComponent<PlayerBall>();
             Interaction();
             IsInteractable = false;
+            _radarObj.Disable();
         }
 
         #endregion
