@@ -15,6 +15,7 @@ namespace RollABall
         private DisplayEndGame _displayEndGame;
         private DisplayBonuses _displayBonuses;
         private CameraController _cameraController;
+        private MiniMapController _miniMapController;
         private InputController _inputController;
         private Reference _reference;
 
@@ -39,6 +40,9 @@ namespace RollABall
 
             _cameraController = new CameraController(player.transform, _reference.MainCamera.transform);
             _executeObjects.AddExecuteObject(_cameraController);
+
+            _miniMapController = new MiniMapController(_reference.MiniMapCamera, _reference.MainCamera.transform);
+            _executeObjects.AddExecuteObject(_miniMapController);
 
             if (Application.platform == RuntimePlatform.WindowsEditor)
             {
