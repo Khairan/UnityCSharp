@@ -3,15 +3,23 @@ using static UnityEngine.Random;
 using static UnityEngine.Debug;
 using UnityEngine.Events;
 
+
 namespace RollABall
 {
     public abstract class InteractiveObject : MonoBehaviour, IExecute
     {
         #region Fields
 
+        [SerializeField] private bool _isAllowScaling;
+        [Range(0, 3)]
+        [SerializeField] private float ActiveDis;
+
         protected PlayerBall _player;
         protected Color _color;
 
+        private RadarObj _radarObj;
+
+        [Space(20)]
         public UnityEvent BonusEvent;
 
         public bool _isInteractable;
@@ -43,6 +51,8 @@ namespace RollABall
 
             BonusEvent = new UnityEvent();
             BonusEvent.AddListener(PlaySound);
+            _radarObj = new RadarObj(this);
+            _radarObj.Enable();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -54,6 +64,7 @@ namespace RollABall
             _player = other.GetComponent<PlayerBall>();
             Interaction();
             IsInteractable = false;
+            _radarObj.Disable();
         }
 
         #endregion
@@ -69,6 +80,25 @@ namespace RollABall
         {
             Log(_player.ToString());
             BonusEvent.Invoke();
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawIcon(transform.position, "bot.jpg", _isAllowScaling);
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            #if UNITY_EDITOR
+            Transform t = transform;
+
+            //Gizmos.matrix = Matrix4x4.TRS(t.position, t.rotation, t.localScale);
+            //Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
+
+            var flat = new Vector3(ActiveDis, 0, ActiveDis);
+            Gizmos.matrix = Matrix4x4.TRS(t.position, t.rotation, flat);
+            Gizmos.DrawWireSphere(Vector3.zero, 5);
+            #endif
         }
 
         #endregion
