@@ -15,7 +15,9 @@ namespace RollABall
         private GameObject _bonuse;
         private GameObject _endGame;
         private Button _restartButton;
-        private GameObject _miniMap;
+        private RenderTexture _miniMapTexture;
+        private GameObject _radar;
+        private Image _radarImage;
 
         private string _miniMapCameraName = "MinimapCamera";
 
@@ -64,17 +66,44 @@ namespace RollABall
             }
         }
 
-        public GameObject MiniMap
+        public GameObject Radar
         {
             get
             {
-                if (_miniMap == null)
+                if (_radar == null)
                 {
-                    var gameObject = Resources.Load<GameObject>("MiniMap/MiniMap");
-                    _miniMap = Object.Instantiate(gameObject, Canvas.transform);
+                    var gameObject = Resources.Load<GameObject>("MiniMap/Radar");
+                    _radar = Object.Instantiate(gameObject, Canvas.transform);
                 }
 
-                return _miniMap;
+                return _radar;
+            }
+        }
+
+        public Image RadarImage
+        {
+            get
+            {
+                if (_radarImage == null)
+                {
+                    var gameObject = Resources.Load<Image>("MiniMap/RadarObject");
+                    _radarImage = Object.Instantiate(gameObject, Radar.transform);
+                }
+
+                return _radarImage;
+            }
+        }
+
+        public RenderTexture MiniMapTexture
+        {
+            get
+            {
+                if (_miniMapTexture == null)
+                {
+                    _miniMapTexture = Resources.Load<RenderTexture>("MiniMap/MiniMapTexture");
+                }
+
+                return _miniMapTexture;
             }
         }
 

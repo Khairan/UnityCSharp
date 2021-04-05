@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEngine.Random;
 
 
 namespace RollABall
@@ -16,6 +15,7 @@ namespace RollABall
         private DisplayBonuses _displayBonuses;
         private CameraController _cameraController;
         private MiniMapController _miniMapController;
+        private RadarController _radarController;
         private InputController _inputController;
         private Reference _reference;
 
@@ -41,8 +41,11 @@ namespace RollABall
             _cameraController = new CameraController(player.transform, _reference.MainCamera.transform);
             _executeObjects.AddExecuteObject(_cameraController);
 
-            _miniMapController = new MiniMapController(_reference.MiniMapCamera, _reference.MainCamera.transform);
+            _miniMapController = new MiniMapController(_reference.MiniMapCamera, _reference.MainCamera.transform, _reference.MiniMapTexture);
             _executeObjects.AddExecuteObject(_miniMapController);
+
+            _radarController = new RadarController(_reference.Radar.transform, _reference.MainCamera.transform);
+            _executeObjects.AddExecuteObject(_radarController);
 
             if (Application.platform == RuntimePlatform.WindowsEditor)
             {
